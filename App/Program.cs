@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+builder.Services.AddTransient<IBaseService, BaseService>();
+builder.Services.AddTransient<IQueryJobService, QueryJobService>();
 
 var app = builder.Build();
 
