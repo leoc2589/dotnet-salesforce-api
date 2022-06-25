@@ -4,27 +4,31 @@ namespace App.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
+    private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+    private readonly string _uri;
 
-    public AuthenticationService()
+    public AuthenticationService(IConfiguration configuration)
     {
         _httpClient = new HttpClient();
+        _configuration = configuration;
+        _uri = _configuration.GetValue<string>("Salesforce:Account:BaseUri");
     }
 
-    public async Task<(bool Success, string JsonString, string Message)> AuthenticateAsync()
+    public async Task<(bool Success, string JsonString, string Message)> SignInAsync()
     {
         try
         {
-            var requestUri = $"{Constants.BaseUrl}/services/oauth2/token";
+            var requestUri = $"{_uri}/services/oauth2/token";
 
             var encodedContent = new FormUrlEncodedContent(new Dictionary<string, string>
-                {
-                    { "grant_type", Constants.GrantType },
-                    { "client_id", Constants.ClientId },
-                    { "client_secret", Constants.ClientSecret },
-                    { "username", Constants.Username },
-                    { "password", Constants.Password }
-                });
+            {
+                { "grant_type", Constants.GrantType },
+                { "client_id", _configuration.GetValue<string>("Salesforce:Account:ClientId") },
+                { "client_secret", _configuration.GetValue<string>("Salesforce:Account:ClientSecret") },
+                { "username", _configuration.GetValue<string>("Salesforce:Credentials:Username") },
+                { "password", _configuration.GetValue<string>("Salesforce:Credentials:Password") }
+            });
 
             var response = await _httpClient.PostAsync(requestUri, encodedContent);
 

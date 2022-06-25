@@ -9,19 +9,22 @@ namespace App.Services;
 
 public class QueryJobService : IQueryJobService
 {
-    private readonly string BaseUri = $"{Constants.BaseUrl}/services/data/{Constants.SaleforceApiVersion}/jobs/query";
+    private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+    private readonly string _uri;
 
-    public QueryJobService()
+    public QueryJobService(IConfiguration configuration)
     {
         _httpClient = new HttpClient();
+        _configuration = configuration;
+        _uri = $"{configuration.GetValue<string>("Salesforce:Account:BaseUri")}/services/data/{configuration.GetValue<string>("Salesforce:Account:ApiVersion")}/jobs/query";
     }
 
     public async Task<(bool Success, string JsonString, string Message)> GetAsync(string token, string id)
     {
         try
         {
-            var requestUri = $"{BaseUri}/{id}";
+            var requestUri = $"{_uri}/{id}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -42,7 +45,7 @@ public class QueryJobService : IQueryJobService
     {
         try
         {
-            var requestUri = $"{BaseUri}/{id}/results";
+            var requestUri = $"{_uri}/{id}/results";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -63,7 +66,7 @@ public class QueryJobService : IQueryJobService
     {
         try
         {
-            var requestUri = $"{BaseUri}";
+            var requestUri = $"{_uri}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -90,7 +93,7 @@ public class QueryJobService : IQueryJobService
     {
         try
         {
-            var requestUri = $"{BaseUri}/{id}";
+            var requestUri = $"{_uri}/{id}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -115,7 +118,7 @@ public class QueryJobService : IQueryJobService
     {
         try
         {
-            var requestUri = $"{BaseUri}/{id}";
+            var requestUri = $"{_uri}/{id}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 

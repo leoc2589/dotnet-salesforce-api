@@ -11,19 +11,22 @@ namespace App.Services;
 
 public class BaseService : IBaseService
 {
-    private readonly string BaseUri = $"{Constants.BaseUrl}/services/data/{Constants.SaleforceApiVersion}";
+    private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+    private readonly string _uri;
 
-    public BaseService()
+    public BaseService(IConfiguration configuration)
     {
         _httpClient = new HttpClient();
+        _configuration = configuration;
+        _uri = $"{configuration.GetValue<string>("Salesforce:Account:BaseUri")}/services/data/{configuration.GetValue<string>("Salesforce:Account:ApiVersion")}";
     }
 
     public async Task<(bool Success, string JsonString, string Message)> CountAsync(string token, QueryOptions options)
     {
         try
         {
-            var requestUri = $"{BaseUri}/query";
+            var requestUri = $"{_uri}/query";
 
             var sql = QueryComposer.GenerateCountQuery(options);
 
@@ -50,7 +53,7 @@ public class BaseService : IBaseService
     {
         try
         {
-            var requestUri = $"{BaseUri}/query";
+            var requestUri = $"{_uri}/query";
 
             var sql = QueryComposer.GenerateSelectQuery(options);
 
@@ -77,7 +80,7 @@ public class BaseService : IBaseService
     {
         try
         {
-            var requestUri = $"{BaseUri}/sobjects/{sobject}";
+            var requestUri = $"{_uri}/sobjects/{sobject}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -102,7 +105,7 @@ public class BaseService : IBaseService
     {
         try
         {
-            var requestUri = $"{BaseUri}/sobjects/{sobject}/{id}";
+            var requestUri = $"{_uri}/sobjects/{sobject}/{id}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -126,7 +129,7 @@ public class BaseService : IBaseService
     {
         try
         {
-            var requestUri = $"{BaseUri}/sobjects/{sobject}/{id}";
+            var requestUri = $"{_uri}/sobjects/{sobject}/{id}";
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
