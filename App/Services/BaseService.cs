@@ -32,8 +32,6 @@ public class BaseService : IBaseService
 
             var query = new Dictionary<string, string> { { "q", sql } };
 
-            Console.WriteLine(query["q"]);
-
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(requestUri, query));
@@ -58,8 +56,6 @@ public class BaseService : IBaseService
             var sql = QueryComposer.GenerateSelectQuery(options);
 
             var query = new Dictionary<string, string> { { "q", sql } };
-
-            Console.WriteLine(query["q"]);
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 

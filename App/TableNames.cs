@@ -1,6 +1,6 @@
 namespace App;
 
-public static class Glossary
+public static class TableNames
 {
     public const string Contact = "Contact";
 }

@@ -28,9 +28,9 @@ public class QueryJobsController : ControllerBase
         _logger = logger;
     }
 
-    ///<summary>s
+    /// <summary>s
     /// Create query job for contacts.
-    ///</summary>
+    /// </summary>
     /// <response code="200">Success</response>
     /// <response code="401">Unauthorized</response>
     [HttpPost]
@@ -42,25 +42,25 @@ public class QueryJobsController : ControllerBase
 
         var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(JsonString);
 
-        var options = new QueryOptions { Table = Glossary.Contact, Fields = new[] { "Id", "Email" } };
+        var options = new QueryOptions { Table = TableNames.Contact, Fields = new[] { "Id", "Email" } };
 
         var request = new CreateQueryJobRequest { Operation = "query", Query = QueryComposer.GenerateSelectQuery(options) };
 
         (Success, JsonString, Message) = await _queryJobService.CreateAsync(authResponse.Access_Token, request);
 
-        if (!Success) return BadRequest(new { Message = Message });
+        if (!Success) return BadRequest(new { Message });
 
         return Ok(JsonConvert.DeserializeObject<CreateQueryJobResponse>(JsonString));
     }
 
-    ///<summary>s
+    /// <summary>s
     /// Contacts list by job.
-    ///</summary>
+    /// </summary>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="401">Unauthorized</response>
     [HttpGet("{id}/contacts")]
-    public async Task<ActionResult<IEnumerable<Contact>>> GetContactsAsync([FromQuery] string id)
+    public async Task<ActionResult<IEnumerable<Contact>>> GetContactsAsync(string id)
     {
         var (Success, JsonString, Message) = await _authService.SignInAsync();
 
@@ -70,7 +70,7 @@ public class QueryJobsController : ControllerBase
 
         var result = await _queryJobService.GetResultsAsync(authResponse.Access_Token, id);
 
-        if (!result.Success) return BadRequest(new { Message = result.Message });
+        if (!result.Success) return BadRequest(new { result.Message });
 
         var records = CsvHelperUtilities.GetRecords<Contact, ContactMap>(result.CsvString);
 

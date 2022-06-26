@@ -20,9 +20,9 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
-    ///<summary>s
+    /// <summary>s
     /// Sign in.
-    ///</summary>
+    /// </summary>
     /// <response code="200">Success</response>
     /// <response code="401">Unauthorized</response>
     [HttpPost("signIn")]

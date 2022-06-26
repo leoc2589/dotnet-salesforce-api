@@ -4,6 +4,7 @@ using App.Interfaces;
 using App.Models.Requests;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace App.Services;
 
@@ -34,27 +35,6 @@ public class QueryJobService : IQueryJobService
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return (true, jsonString, null);
-        }
-        catch (Exception ex)
-        {
-            return (false, null, ex.Message);
-        }
-    }
-
-    public async Task<(bool Success, string CsvString, string Message)> GetResultsAsync(string token, string id)
-    {
-        try
-        {
-            var requestUri = $"{_uri}/{id}/results";
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.GetAsync(requestUri);
-
-            if (!response.IsSuccessStatusCode) return (false, null, response.ReasonPhrase);
-
-            var csvString = await response.Content.ReadAsStringAsync();
-            return (true, csvString, null);
         }
         catch (Exception ex)
         {
@@ -131,6 +111,33 @@ public class QueryJobService : IQueryJobService
         catch (Exception ex)
         {
             return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool Success, string CsvString, string Message)> GetResultsAsync(string token, string id, string locator = null, string maxRecords = null)
+    {
+        try
+        {
+            var requestUri = $"{_uri}/{id}/results";
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var query = new Dictionary<string, string> { };
+
+            if (!string.IsNullOrEmpty(locator)) query.Add("locator", locator);
+
+            if (!string.IsNullOrEmpty(maxRecords)) query.Add("maxRecords", maxRecords);
+
+            var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(requestUri, query));
+
+            if (!response.IsSuccessStatusCode) return (false, null, response.ReasonPhrase);
+
+            var csvString = await response.Content.ReadAsStringAsync();
+            return (true, csvString, null);
+        }
+        catch (Exception ex)
+        {
+            return (false, null, ex.Message);
         }
     }
 }

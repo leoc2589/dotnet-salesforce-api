@@ -25,9 +25,9 @@ public class ContactsController : ControllerBase
         _logger = logger;
     }
 
-    ///<summary>s
+    /// <summary>
     /// Contacts list.
-    ///</summary>
+    /// </summary>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="401">Unauthorized</response>
@@ -40,11 +40,11 @@ public class ContactsController : ControllerBase
 
         var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(JsonString);
 
-        var queryOptions = new QueryOptions { Table = Glossary.Contact, Fields = new[] { "Id", "Email" } };
+        var queryOptions = new QueryOptions { Table = TableNames.Contact, Fields = new[] { "Id", "Email" } };
 
         (Success, JsonString, Message) = await _baseService.ListAsync(authResponse.Access_Token, queryOptions);
 
-        if (!Success) return BadRequest(new { Message = Message });
+        if (!Success) return BadRequest(new { Message });
 
         var contactsListResponse = JsonConvert.DeserializeObject<ContactsListResponse>(JsonString);
 
