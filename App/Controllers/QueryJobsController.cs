@@ -68,11 +68,11 @@ public class QueryJobsController : ControllerBase
 
         var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(JsonString);
 
-        var result = await _queryJobService.GetResultsAsync(authResponse.Access_Token, id);
+        var result = await _queryJobService.GetResultsAsync(authResponse.Access_Token, id, locator: null, maxRecords: 2);
 
         if (!result.Success) return BadRequest(new { result.Message });
 
-        var records = CsvHelperUtilities.GetRecords<Contact, ContactMap>(result.CsvString);
+        var records = CsvHelperUtilities.GetRecords<Contact, ContactMap>(result.Response.CsvString);
 
         return Ok(records);
     }

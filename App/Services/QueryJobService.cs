@@ -1,10 +1,11 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using App.Interfaces;
-using App.Models.Requests;
 using System.Net.Http.Headers;
 using System.Text;
+using App.Interfaces;
+using App.Models.Requests;
+using App.Models.Responses;
 using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace App.Services;
 
@@ -114,7 +115,7 @@ public class QueryJobService : IQueryJobService
         }
     }
 
-    public async Task<(bool Success, string CsvString, string Message)> GetResultsAsync(string token, string id, string locator = null, string maxRecords = null)
+    public async Task<(bool Success, JobResultsResponse Response, string Message)> GetResultsAsync(string token, string id, string locator = null, int? maxRecords = null)
     {
         try
         {
@@ -126,14 +127,20 @@ public class QueryJobService : IQueryJobService
 
             if (!string.IsNullOrEmpty(locator)) query.Add("locator", locator);
 
-            if (!string.IsNullOrEmpty(maxRecords)) query.Add("maxRecords", maxRecords);
+            if (maxRecords.HasValue) query.Add("maxRecords", $"{maxRecords.Value}");
 
             var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString(requestUri, query));
 
             if (!response.IsSuccessStatusCode) return (false, null, response.ReasonPhrase);
 
-            var csvString = await response.Content.ReadAsStringAsync();
-            return (true, csvString, null);
+            var jobResultsResponse = new JobResultsResponse
+            {
+                Locator = response.Headers.GetValues("Sforce-Locator")?.FirstOrDefault(),
+                NumberOfRecords = response.Headers.GetValues("Sforce-NumberOfRecords")?.FirstOrDefault(),
+                CsvString = await response.Content.ReadAsStringAsync()
+            };
+
+            return (true, jobResultsResponse, null);
         }
         catch (Exception ex)
         {
