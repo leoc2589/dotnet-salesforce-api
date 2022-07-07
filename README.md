@@ -10,8 +10,8 @@ Register your application to use Salesforce REST API using the [Salesforce REST 
 
 ### 2. Set parameters
 
-Set salesforce application parameters into `appsettings.Development.json`.
+Set Salesforce application parameters into `appsettings.Development.json`.
 
 ### 3. Run application
 
-Run application in Development environment.
+Run application in `Development` environment.
