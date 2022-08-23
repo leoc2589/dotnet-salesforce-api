@@ -20,7 +20,7 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>s
+    /// <summary>
     /// Sign in.
     /// </summary>
     /// <response code="200">Success</response>
