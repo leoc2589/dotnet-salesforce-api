@@ -28,7 +28,7 @@ public class QueryJobsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>s
+    /// <summary>
     /// Create query job for contacts.
     /// </summary>
     /// <response code="200">Success</response>
@@ -53,7 +53,7 @@ public class QueryJobsController : ControllerBase
         return Ok(JsonConvert.DeserializeObject<CreateQueryJobResponse>(JsonString));
     }
 
-    /// <summary>s
+    /// <summary>
     /// Contacts list by job.
     /// </summary>
     /// <response code="200">Success</response>
